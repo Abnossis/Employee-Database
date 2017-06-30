@@ -82,5 +82,72 @@
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 		<script src="assets/javascript/logic.js"></script>
+		 <script>
+  // Initialize Firebase
+  var config = {
+    apiKey: "AIzaSyCphFsW5p1yJTDGTDSMpNmHtIjjUdIiyp4",
+    authDomain: "employee-database-6a817.firebaseapp.com",
+    databaseURL: "https://employee-database-6a817.firebaseio.com",
+    projectId: "employee-database-6a817",
+    storageBucket: "employee-database-6a817.appspot.com",
+    messagingSenderId: "886032862159"
+  };
+  firebase.initializeApp(config);
+
+    // Create a variable to reference the database.
+    var database = firebase.database();
+
+    // Initial Values
+    var employeename = "";
+    var role = "";
+    var startdate = 0;
+    var monthlyrate = "0";
+
+    // Capture Button Click
+    $("#add-user").on("click", function(event) {
+      event.preventDefault();
+
+      // Grabbed values from text boxes
+      employeename = $("#employeename-input").val().trim();
+      role = $("#role-input").val().trim();
+      startdate  = $("#startdate-input").val().trim();
+      monthlyrate = $("#monthlyrate-input").val().trim();
+     
+      // Code for handling the push
+        database.ref().push({
+        employeename: employeename,
+        role: role,
+        startdate: startdate,
+        monthlyrate: monthlyrate,
+        dateAdded: firebase.database.ServerValue.TIMESTAMP
+      });
+
+    });
+
+    // Firebase watcher + initial loader + order/limit HINT: .on("child_added"
+    database.ref().orderByChild("dateAdded").limitToLast(1).on("child_added", function(snapshot) {
+      // storing the snapshot.val() in a variable for convenience
+      var sv = snapshot.val();
+
+      // Console.loging the last user's data
+      console.log(sv.employeename);
+      console.log(sv.role);
+      console.log(sv.startdate);
+      console.log(sv.monthlyrate);
+
+      // Change the HTML to reflect
+      $("#name-display").html(sv.employeename);
+      $("#role-display").html(sv.role);
+      $("#startdate-display").html(sv.startdate);
+      $("#monthlyrate-display").html(sv.monthlyrate);
+
+      // Handle the errors
+    }, function(errorObject) {
+      console.log("Errors handled: " + errorObject.code);
+    });
+  </script>
+
+
+
 	</body>
 </html>
